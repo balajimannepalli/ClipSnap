@@ -274,6 +274,12 @@ export function ThemeProvider({ children }) {
             root.classList.remove('dark');
         }
 
+        // Update Favicon
+        const link = document.querySelector("link[rel~='icon']");
+        if (link) {
+            link.href = theme === 'dark' ? '/clipboard-dark.svg' : '/clipboard-light.svg';
+        }
+
         localStorage.setItem(STORAGE_KEY, theme);
     }, [theme]);
 
