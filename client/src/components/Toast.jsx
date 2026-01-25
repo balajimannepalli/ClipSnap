@@ -17,9 +17,15 @@ export default function Toast({ message, type = 'success', duration = 3000, onCl
     }, [duration, onClose]);
 
     const bgColor = {
-        success: 'bg-primary-600',
+        success: 'bg-[var(--color-accent)]',
         error: 'bg-red-600',
-        info: 'bg-dark-700'
+        info: 'bg-[var(--color-surface)] border border-[var(--color-border)]'
+    }[type];
+
+    const textColor = {
+        success: 'text-[var(--color-bg)]',
+        error: 'text-white',
+        info: 'text-themed'
     }[type];
 
     const icon = {
@@ -46,7 +52,10 @@ export default function Toast({ message, type = 'success', duration = 3000, onCl
             role="alert"
             aria-live="polite"
         >
-            <div className={`${bgColor} text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 min-w-[280px] max-w-md`}>
+            <div
+                className={`${bgColor} ${textColor} px-4 py-3 shadow-lg flex items-center gap-3 min-w-[280px] max-w-md`}
+                style={{ borderRadius: 'var(--radius-card)' }}
+            >
                 {icon}
                 <p className="font-medium text-sm">{message}</p>
                 <button
@@ -54,7 +63,7 @@ export default function Toast({ message, type = 'success', duration = 3000, onCl
                         setIsExiting(true);
                         setTimeout(onClose, 300);
                     }}
-                    className="ml-auto p-1 hover:bg-white/20 rounded transition-colors"
+                    className="ml-auto p-1 hover:opacity-70 rounded transition-opacity"
                     aria-label="Close notification"
                 >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

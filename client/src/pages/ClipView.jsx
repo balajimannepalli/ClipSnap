@@ -8,6 +8,7 @@ import { useToast } from '../context/ToastContext';
 import CopyButton from '../components/CopyButton';
 import DownloadButton from '../components/DownloadButton';
 import ExpiryCountdown from '../components/ExpiryCountdown';
+import BackButton from '../components/BackButton';
 
 const MAX_SIZE_BYTES = 100 * 1024;
 
@@ -139,13 +140,13 @@ export default function ClipView() {
         return (
             <div className="max-w-3xl mx-auto px-4 py-16 text-center">
                 <div className="animate-pulse">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-dark-800 flex items-center justify-center">
-                        <svg className="w-8 h-8 text-primary-500 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[var(--color-border)] flex items-center justify-center">
+                        <svg className="w-8 h-8 text-[var(--color-accent)] animate-spin" fill="none" viewBox="0 0 24 24">
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                         </svg>
                     </div>
-                    <p className="text-dark-400">Loading clip...</p>
+                    <p className="text-themed-secondary">Loading clip...</p>
                 </div>
             </div>
         );
@@ -156,12 +157,12 @@ export default function ClipView() {
         return (
             <div className="max-w-3xl mx-auto px-4 py-16 text-center">
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/10 flex items-center justify-center">
-                    <svg className="w-8 h-8 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-8 h-8 text-red-500 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                 </div>
-                <h2 className="text-xl font-semibold text-dark-100 mb-2">Clip Not Found</h2>
-                <p className="text-dark-400 mb-6">{error}</p>
+                <h2 className="text-xl font-semibold text-themed mb-2">Clip Not Found</h2>
+                <p className="text-themed-secondary mb-6">{error}</p>
                 <button onClick={() => navigate('/')} className="btn-primary">
                     Go Home
                 </button>
@@ -174,52 +175,57 @@ export default function ClipView() {
     return (
         <div className="max-w-3xl mx-auto px-4 py-8 md:py-12 animate-fade-in">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                <div>
-                    <div className="flex items-center gap-3 mb-1">
-                        <h1 className="text-xl md:text-2xl font-bold text-dark-100 font-mono">
-                            {id}
-                        </h1>
-                        {isCreator && (
-                            <span className="px-2 py-0.5 text-xs font-medium bg-primary-500/20 text-primary-400 rounded-full">
-                                Creator
-                            </span>
-                        )}
-                        {!isCreator && (
-                            <span className="px-2 py-0.5 text-xs font-medium bg-dark-700 text-dark-400 rounded-full">
-                                Read-only
-                            </span>
-                        )}
-                    </div>
-                    <div className="flex items-center gap-4 text-sm text-dark-500">
-                        <span className={`flex items-center gap-1 ${isConnected ? 'text-primary-400' : 'text-dark-500'}`}>
-                            <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-primary-500' : 'bg-dark-600'}`} />
-                            {isConnected ? 'Live' : 'Offline'}
-                        </span>
-                        {createdAt && (
-                            <ExpiryCountdown createdAt={createdAt} />
-                        )}
-                    </div>
+            <div className="mb-6">
+                <div className="mb-4">
+                    <BackButton to="/" label="Back to Home" />
                 </div>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <div className="flex items-center gap-3 mb-1">
+                            <h1 className="text-xl md:text-2xl font-bold text-themed font-mono">
+                                {id}
+                            </h1>
+                            {isCreator && (
+                                <span className="px-2 py-0.5 text-xs font-medium bg-[var(--color-accent)]/20 text-[var(--color-accent)] rounded-full">
+                                    Creator
+                                </span>
+                            )}
+                            {!isCreator && (
+                                <span className="px-2 py-0.5 text-xs font-medium bg-[var(--color-border)] text-themed-muted rounded-full">
+                                    Read-only
+                                </span>
+                            )}
+                        </div>
+                        <div className="flex items-center gap-4 text-sm text-themed-muted">
+                            <span className={`flex items-center gap-1 ${isConnected ? 'text-green-500 dark:text-green-400' : ''}`}>
+                                <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-[var(--color-border)]'}`} />
+                                {isConnected ? 'Live' : 'Offline'}
+                            </span>
+                            {createdAt && (
+                                <ExpiryCountdown createdAt={createdAt} />
+                            )}
+                        </div>
+                    </div>
 
-                {/* Share Code */}
-                <div className="flex items-center gap-3">
-                    <span className="text-dark-400 text-sm">Code:</span>
-                    <span className="text-2xl font-bold font-mono text-primary-400 tracking-wider">{id}</span>
-                    <CopyButton
-                        text={id}
-                        onSuccess={() => showToast('Code copied!', 'success')}
-                    />
+                    {/* Share Code */}
+                    <div className="flex items-center gap-3">
+                        <span className="text-themed-secondary text-sm">Code:</span>
+                        <span className="text-2xl font-bold font-mono text-[var(--color-accent)] tracking-wider">{id}</span>
+                        <CopyButton
+                            text={id}
+                            onSuccess={() => showToast('Code copied!', 'success')}
+                        />
+                    </div>
                 </div>
             </div>
 
             {/* Auto-copy success banner (for viewers) */}
             {autoCopied && !isCreator && (
-                <div className="mb-6 p-4 bg-primary-500/10 border border-primary-500/30 rounded-lg flex items-center gap-3">
-                    <svg className="w-5 h-5 text-primary-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="mb-6 p-4 bg-green-500/10 border border-green-500/30 rounded-lg flex items-center gap-3">
+                    <svg className="w-5 h-5 text-green-500 dark:text-green-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
-                    <p className="text-primary-300 text-sm">
+                    <p className="text-green-600 dark:text-green-400 text-sm">
                         <strong>Copied to clipboard</strong> — ready to paste!
                     </p>
                 </div>
@@ -228,7 +234,7 @@ export default function ClipView() {
             {/* Socket error */}
             {socketError && (
                 <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-                    <p className="text-red-400 text-sm">{socketError}</p>
+                    <p className="text-red-500 dark:text-red-400 text-sm">{socketError}</p>
                 </div>
             )}
 
@@ -245,7 +251,7 @@ export default function ClipView() {
                             className="w-full h-64 md:h-96 text-sm"
                             placeholder="Start typing..."
                         />
-                        <div className="mt-3 flex items-center justify-between text-sm text-dark-500">
+                        <div className="mt-3 flex items-center justify-between text-sm text-themed-muted">
                             <span>{(sizeBytes / 1024).toFixed(1)} KB / 100 KB</span>
                             <span>{content.length.toLocaleString()} characters</span>
                         </div>
@@ -256,7 +262,7 @@ export default function ClipView() {
                         <pre className="code-block min-h-[200px] max-h-[600px] overflow-auto">
                             <code>{content || 'No content'}</code>
                         </pre>
-                        <div className="mt-3 text-sm text-dark-500">
+                        <div className="mt-3 text-sm text-themed-muted">
                             {content.length.toLocaleString()} characters
                         </div>
                     </div>
@@ -276,8 +282,8 @@ export default function ClipView() {
 
             {/* Copy fallback for blocked clipboard */}
             {!autoCopied && !isCreator && content && (
-                <div className="mt-8 p-4 bg-dark-900/50 rounded-lg border border-dark-800">
-                    <p className="text-sm text-dark-400 mb-3">
+                <div className="mt-8 p-4 bg-themed-surface rounded-lg border border-themed">
+                    <p className="text-sm text-themed-secondary mb-3">
                         If automatic copy didn't work, select the text above or use the Copy button.
                     </p>
                     <CopyButton

@@ -1,97 +1,287 @@
+/* =====================================================
+   ClipSnap Theme System
+   
+   THEMES:
+   - Dark: Next.js style (engineering-first, minimal, calm)
+   - Light: Sustainable Fashion style (premium, warm, inviting)
+   
+   USAGE:
+   - Apply "dark" class to <html> for dark mode
+   - Remove "dark" class for light mode
+   - CSS custom properties enable smooth theme transitions
+   ===================================================== */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Base styles */
+/* =====================================================
+   CSS Custom Properties (Theme Variables)
+   ===================================================== */
+@layer base {
+  :root {
+    /* Light Theme (default) - Sustainable Fashion Style */
+    --color-bg: #f7f5f2;
+    --color-surface: #ffffff;
+    --color-border: #e8e4de;
+    --color-border-hover: #d4cfc7;
+    --color-text: #1a1a1a;
+    --color-text-secondary: #6b6b6b;
+    --color-text-muted: #9a9a9a;
+    --color-accent: #5c6b4a;
+    --color-accent-hover: #4a5a3a;
+
+    /* Light theme: rounded corners, soft shadows */
+    --radius-card: 1rem;
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.04);
+    --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.1);
+
+    /* View Transitions timing function */
+    --expo-out: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .dark {
+    /* Dark Theme - Next.js Style */
+    --color-bg: #0a0a0a;
+    --color-surface: #111111;
+    --color-border: #1f1f1f;
+    --color-border-hover: #2a2a2a;
+    --color-text: #ffffff;
+    --color-text-secondary: #a1a1a1;
+    --color-text-muted: #737373;
+    --color-accent: #ffffff;
+    --color-accent-hover: #e5e5e5;
+
+    /* Dark theme: sharp edges, no shadows */
+    --radius-card: 0.5rem;
+    --shadow-card: none;
+    --shadow-card-hover: none;
+  }
+}
+
+/* =====================================================
+   Base Styles
+   ===================================================== */
 * {
   box-sizing: border-box;
 }
 
 html {
   scroll-behavior: smooth;
+  /* Smooth theme transitions */
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 body {
-  @apply bg-dark-950 text-dark-100 font-sans antialiased;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Custom scrollbar */
+/* =====================================================
+   Custom Scrollbar
+   ===================================================== */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-dark-900;
+  background-color: var(--color-surface);
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-dark-600 rounded-full;
+  background-color: var(--color-border-hover);
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-dark-500;
+  background-color: var(--color-text-muted);
 }
 
-/* Focus styles for accessibility */
+/* =====================================================
+   Focus & Selection
+   ===================================================== */
 :focus-visible {
-  @apply outline-2 outline-offset-2 outline-primary-500;
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
-/* Selection */
 ::selection {
-  @apply bg-primary-500/30 text-primary-100;
+  background-color: rgba(92, 107, 74, 0.2);
 }
 
-/* Textarea and input base */
-textarea,
-input {
-  @apply bg-dark-900 border border-dark-700 rounded-lg px-4 py-3 text-dark-100 
-         placeholder:text-dark-500 transition-all duration-200
-         focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none;
+.dark ::selection {
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
-textarea {
-  @apply font-mono text-sm leading-relaxed resize-none;
+/* =====================================================
+   Typography
+   ===================================================== */
+/* Light theme: serif headlines for editorial feel */
+h1,
+h2,
+h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  color: var(--color-text);
 }
 
-/* Button base */
-.btn {
-  @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg 
-         font-medium transition-all duration-200 
-         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-dark-950
-         disabled:opacity-50 disabled:cursor-not-allowed;
+/* Dark theme: sans-serif for engineering feel */
+.dark h1,
+.dark h2,
+.dark h3 {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
-.btn-primary {
-  @apply btn bg-primary-600 text-white hover:bg-primary-500 
-         focus:ring-primary-500 active:bg-primary-700;
+/* =====================================================
+   Form Elements
+   ===================================================== */
+@layer components {
+
+  textarea,
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    @apply w-full px-4 py-3 rounded-lg transition-all duration-200;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    border-radius: var(--radius-card);
+  }
+
+  textarea::placeholder,
+  input::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  textarea:focus,
+  input:focus {
+    border-color: var(--color-accent);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(92, 107, 74, 0.1);
+  }
+
+  .dark textarea:focus,
+  .dark input:focus {
+    border-color: var(--color-border-hover);
+    box-shadow: none;
+  }
+
+  textarea {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.875rem;
+    line-height: 1.625;
+    resize: none;
+  }
 }
 
-.btn-secondary {
-  @apply btn bg-dark-800 text-dark-100 border border-dark-600 
-         hover:bg-dark-700 hover:border-dark-500 
-         focus:ring-dark-500;
+/* =====================================================
+   Buttons
+   ===================================================== */
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-200 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed;
+    border-radius: var(--radius-card);
+  }
+
+  /* Primary button - themed */
+  .btn-primary {
+    @apply btn;
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background-color: var(--color-accent-hover);
+  }
+
+  .dark .btn-primary:hover:not(:disabled) {
+    background-color: var(--color-accent);
+    opacity: 0.9;
+  }
+
+  /* Secondary button - themed */
+  .btn-secondary {
+    @apply btn;
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    border-color: var(--color-border-hover);
+    box-shadow: var(--shadow-card);
+  }
+
+  .dark .btn-secondary:hover:not(:disabled) {
+    background-color: var(--color-border);
+    box-shadow: none;
+  }
+
+  /* Ghost button - themed */
+  .btn-ghost {
+    @apply btn;
+    background-color: transparent;
+    color: var(--color-text-secondary);
+  }
+
+  .btn-ghost:hover:not(:disabled) {
+    color: var(--color-text);
+    background-color: var(--color-border);
+  }
 }
 
-.btn-ghost {
-  @apply btn bg-transparent text-dark-300 hover:text-dark-100 
-         hover:bg-dark-800 focus:ring-dark-500;
+/* =====================================================
+   Cards
+   ===================================================== */
+@layer components {
+  .card {
+    @apply p-6 transition-all duration-300;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+  }
+
+  .card:hover {
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  .dark .card {
+    backdrop-filter: none;
+  }
+
+  .dark .card:hover {
+    border-color: var(--color-border-hover);
+  }
 }
 
-/* Card styles */
-.card {
-  @apply bg-dark-900/50 backdrop-blur-sm border border-dark-800 rounded-2xl p-6;
+/* =====================================================
+   Code Block
+   ===================================================== */
+@layer components {
+  .code-block {
+    @apply font-mono text-sm p-4 overflow-auto whitespace-pre-wrap break-words;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+  }
+
+  .dark .code-block {
+    background-color: #0d0d0d;
+  }
 }
 
-/* Code block */
-.code-block {
-  @apply font-mono text-sm bg-dark-900 border border-dark-700 rounded-lg p-4 
-         overflow-auto whitespace-pre-wrap break-words;
-}
-
-/* Toast animations */
+/* =====================================================
+   Toast Animations
+   ===================================================== */
 .toast-enter {
   animation: slideIn 0.3s ease-out forwards;
 }
@@ -105,6 +295,7 @@ textarea {
     opacity: 0;
     transform: translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -116,19 +307,68 @@ textarea {
     opacity: 1;
     transform: translateY(0);
   }
+
   to {
     opacity: 0;
     transform: translateY(-20px);
   }
 }
 
-/* Gradient text */
+/* =====================================================
+   Gradient Text (Light theme only - removed for dark)
+   ===================================================== */
 .gradient-text {
-  @apply bg-gradient-to-r from-primary-400 via-primary-300 to-accent-400 
-         bg-clip-text text-transparent;
+  background: linear-gradient(135deg, #5c6b4a, #8b7355);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-/* Glow effect */
-.glow-primary {
-  box-shadow: 0 0 40px rgba(34, 197, 94, 0.15);
+.dark .gradient-text {
+  background: none;
+  -webkit-text-fill-color: #ffffff;
+  color: #ffffff;
+}
+
+/* =====================================================
+   Utility Classes
+   ===================================================== */
+.text-themed {
+  color: var(--color-text);
+}
+
+.text-themed-secondary {
+  color: var(--color-text-secondary);
+}
+
+.text-themed-muted {
+  color: var(--color-text-muted);
+}
+
+.bg-themed {
+  background-color: var(--color-bg);
+}
+
+.bg-themed-surface {
+  background-color: var(--color-surface);
+}
+
+.border-themed {
+  border-color: var(--color-border);
+}
+
+/* =====================================================
+   Theme Toggle Animation
+   ===================================================== */
+.theme-toggle-icon {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.theme-toggle-icon-enter {
+  transform: rotate(0deg) scale(1);
+}
+
+.theme-toggle-icon-exit {
+  transform: rotate(90deg) scale(0);
+  opacity: 0;
 }

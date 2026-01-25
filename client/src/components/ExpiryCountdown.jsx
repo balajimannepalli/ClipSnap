@@ -37,17 +37,17 @@ export default function ExpiryCountdown({ createdAt, className = '' }) {
     const seconds = totalSeconds % 60;
 
     // Determine color based on remaining time
-    let colorClass = 'text-dark-400';
+    let colorClass = 'text-themed-muted';
     if (minutes < 2) {
-        colorClass = 'text-red-400';
+        colorClass = 'text-red-500 dark:text-red-400';
     } else if (minutes < 5) {
-        colorClass = 'text-accent-400';
+        colorClass = 'text-amber-500 dark:text-amber-400';
     }
 
     // Expired
     if (remaining <= 0) {
         return (
-            <span className={`${className} text-red-400 font-medium`}>
+            <span className={`${className} text-red-500 dark:text-red-400 font-medium`}>
                 Expired
             </span>
         );

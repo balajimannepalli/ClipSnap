@@ -30,17 +30,18 @@ export default function CopyButton({ text, onSuccess, onError, className = '', l
             onClick={handleCopy}
             disabled={copying || !text}
             className={`
-        inline-flex items-center justify-center gap-2 rounded-lg font-medium
-        transition-all duration-200 
-        ${copied
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-dark-800 text-dark-100 border border-dark-600 hover:bg-dark-700 hover:border-dark-500'
+                inline-flex items-center justify-center gap-2 font-medium
+                transition-all duration-200 
+                ${copied
+                    ? 'bg-[var(--color-accent)] text-[var(--color-bg)]'
+                    : 'bg-themed-surface text-themed border border-themed hover:border-[var(--color-border-hover)]'
                 }
-        disabled:opacity-50 disabled:cursor-not-allowed
-        focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-dark-950
-        ${sizeClasses}
-        ${className}
-      `}
+                disabled:opacity-50 disabled:cursor-not-allowed
+                focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg)]
+                ${sizeClasses}
+                ${className}
+            `}
+            style={{ borderRadius: 'var(--radius-card)' }}
             aria-label={copied ? 'Copied!' : 'Copy to clipboard'}
         >
             {copying ? (

@@ -4,6 +4,7 @@ import { createClip } from '../utils/api';
 import { saveCreatorToken } from '../utils/storage';
 import { useToast } from '../context/ToastContext';
 import { useClipboard } from '../hooks/useClipboard';
+import BackButton from '../components/BackButton';
 
 const MAX_SIZE_BYTES = 100 * 1024; // 100 KB
 
@@ -69,10 +70,13 @@ export default function CreateClip() {
             <div className="animate-fade-in">
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="text-2xl md:text-3xl font-bold text-dark-100 mb-2">
+                    <div className="mb-4">
+                        <BackButton to="/" />
+                    </div>
+                    <h1 className="text-2xl md:text-3xl font-bold text-themed mb-2">
                         Create New Clip
                     </h1>
-                    <p className="text-dark-400">
+                    <p className="text-themed-secondary">
                         Paste or type your text below. You'll receive a unique clipboard ID to share.
                     </p>
                 </div>
@@ -98,20 +102,20 @@ export default function CreateClip() {
                     {/* Size indicator */}
                     <div className="mt-4 flex items-center justify-between">
                         <div className="flex-1 max-w-xs">
-                            <div className="h-2 bg-dark-800 rounded-full overflow-hidden">
+                            <div className="h-2 bg-[var(--color-border)] rounded-full overflow-hidden">
                                 <div
-                                    className={`h-full transition-all duration-300 ${isOverLimit ? 'bg-red-500' : sizePercent > 80 ? 'bg-accent-500' : 'bg-primary-500'
+                                    className={`h-full transition-all duration-300 ${isOverLimit ? 'bg-red-500' : sizePercent > 80 ? 'bg-amber-500' : 'bg-[var(--color-accent)]'
                                         }`}
                                     style={{ width: `${sizePercent}%` }}
                                 />
                             </div>
-                            <p className={`mt-1 text-xs ${isOverLimit ? 'text-red-400' : 'text-dark-500'}`}>
+                            <p className={`mt-1 text-xs ${isOverLimit ? 'text-red-500 dark:text-red-400' : 'text-themed-muted'}`}>
                                 {formatSize(sizeBytes)} / {formatSize(MAX_SIZE_BYTES)}
                                 {isOverLimit && ' — Content too large'}
                             </p>
                         </div>
 
-                        <p className="text-sm text-dark-500">
+                        <p className="text-sm text-themed-muted">
                             {content.length.toLocaleString()} characters
                         </p>
                     </div>
@@ -119,7 +123,7 @@ export default function CreateClip() {
                     {/* Error message */}
                     {error && (
                         <div className="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-                            <p className="text-sm text-red-400">{error}</p>
+                            <p className="text-sm text-red-500 dark:text-red-400">{error}</p>
                         </div>
                     )}
 
@@ -158,9 +162,9 @@ export default function CreateClip() {
                 </div>
 
                 {/* Info */}
-                <div className="mt-8 p-4 bg-dark-900/50 rounded-lg border border-dark-800">
-                    <h3 className="text-sm font-medium text-dark-300 mb-2">How it works:</h3>
-                    <ul className="text-sm text-dark-500 space-y-1">
+                <div className="mt-8 p-4 bg-themed-surface rounded-lg border border-themed">
+                    <h3 className="text-sm font-medium text-themed-secondary mb-2">How it works:</h3>
+                    <ul className="text-sm text-themed-muted space-y-1">
                         <li>• You'll receive a unique clipboard ID after creating</li>
                         <li>• Share the ID with others to let them view and copy the content</li>
                         <li>• Only you can edit the clip (your browser stores the edit key)</li>
