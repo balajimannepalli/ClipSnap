@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { io } from 'socket.io-client';
 
-const SOCKET_URL = import.meta.env.VITE_SERVER_URL || '';
+const SOCKET_URL = (import.meta.env.VITE_SERVER_URL || '').replace(/\/$/, '');
 
 /**
  * Custom hook for Socket.IO connection and room management

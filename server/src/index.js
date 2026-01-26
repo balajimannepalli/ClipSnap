@@ -11,7 +11,7 @@ import { setupSocketHandlers } from './socket/socketHandler.js';
 import { generalLimiter } from './middleware/rateLimiter.js';
 
 const PORT = process.env.PORT || 3001;
-const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || 'http://localhost:5173';
+const FRONTEND_ORIGIN = (process.env.FRONTEND_ORIGIN || 'http://localhost:5173').replace(/\/$/, '');
 
 // Initialize Express app
 const app = express();

@@ -1,4 +1,5 @@
-const API_BASE = import.meta.env.VITE_SERVER_URL || '';
+const API_BASE = (import.meta.env.VITE_SERVER_URL || '').replace(/\/$/, '');
+console.log('ClipSnap API Base:', API_BASE);
 
 /**
  * Create a new clip
