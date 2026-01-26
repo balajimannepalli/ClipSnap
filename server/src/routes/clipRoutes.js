@@ -2,7 +2,7 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import Clip from '../models/Clip.js';
 import { generateClipboardId, generateCreatorToken } from '../utils/idGenerator.js';
-import { createLimiter, editLimiter } from '../middleware/rateLimiter.js';
+import { createLimiter, editLimiter, readLimiter } from '../middleware/rateLimiter.js';
 import { validateSize, validateTextOnly } from '../middleware/validateSize.js';
 
 const router = express.Router();
@@ -61,7 +61,7 @@ router.post('/', createLimiter, validateSize, validateTextOnly, async (req, res)
  * Get clip content (TTL is fixed from creation, not reset on access)
  * Returns: { clipboardId, content, lastUpdated, createdAt }
  */
-router.get('/:clipboardId', async (req, res) => {
+router.get('/:clipboardId', readLimiter, async (req, res) => {
     try {
         const { clipboardId } = req.params;
 
@@ -97,7 +97,7 @@ router.get('/:clipboardId', async (req, res) => {
  * Get clip metadata without content
  * Returns: { clipboardId, sizeBytes, lastUpdated }
  */
-router.get('/:clipboardId/meta', async (req, res) => {
+router.get('/:clipboardId/meta', readLimiter, async (req, res) => {
     try {
         const { clipboardId } = req.params;
 

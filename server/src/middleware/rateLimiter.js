@@ -2,6 +2,7 @@ import rateLimit from 'express-rate-limit';
 
 const RATE_LIMIT_CREATE = parseInt(process.env.RATE_LIMIT_CREATE_PER_HOUR) || 30;
 const RATE_LIMIT_EDIT = parseInt(process.env.RATE_LIMIT_EDIT_PER_MIN) || 60;
+const RATE_LIMIT_READ = parseInt(process.env.RATE_LIMIT_READ_PER_MIN) || 200;
 
 /**
  * Rate limiter for clip creation
@@ -36,12 +37,28 @@ export const editLimiter = rateLimit({
 });
 
 /**
+ * Rate limiter for reading clips (more permissive)
+ * Default: 200 requests per minute per IP
+ */
+export const readLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 minute
+    max: RATE_LIMIT_READ,
+    message: {
+        error: 'Too many requests. Please slow down.',
+        retryAfter: '1 minute'
+    },
+    standardHeaders: true,
+    legacyHeaders: false,
+    keyGenerator: (req) => req.ip
+});
+
+/**
  * General API rate limiter
- * Default: 100 requests per minute per IP
+ * Default: 200 requests per minute per IP
  */
 export const generalLimiter = rateLimit({
     windowMs: 60 * 1000,
-    max: 100,
+    max: 200,
     message: {
         error: 'Too many requests. Please slow down.'
     },

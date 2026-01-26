@@ -152,20 +152,42 @@ export default function ClipView() {
         );
     }
 
+    // Determine error type for better UX
+    const isRateLimitError = error && (error.includes('Too many') || error.includes('rate') || error.includes('slow down'));
+
     // Error state
     if (error) {
         return (
             <div className="max-w-3xl mx-auto px-4 py-16 text-center">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/10 flex items-center justify-center">
-                    <svg className="w-8 h-8 text-red-500 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
+                <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${isRateLimitError ? 'bg-yellow-500/10' : 'bg-red-500/10'}`}>
+                    {isRateLimitError ? (
+                        <svg className="w-8 h-8 text-yellow-500 dark:text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    ) : (
+                        <svg className="w-8 h-8 text-red-500 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    )}
                 </div>
-                <h2 className="text-xl font-semibold text-themed mb-2">Clip Not Found</h2>
-                <p className="text-themed-secondary mb-6">{error}</p>
-                <button onClick={() => navigate('/')} className="btn-primary">
-                    Go Home
-                </button>
+                <h2 className="text-xl font-semibold text-themed mb-2">
+                    {isRateLimitError ? 'Too Many Requests' : 'Clip Not Found'}
+                </h2>
+                <p className="text-themed-secondary mb-6">
+                    {isRateLimitError
+                        ? 'Please wait a moment and try again.'
+                        : error}
+                </p>
+                <div className="flex gap-3 justify-center">
+                    {isRateLimitError && (
+                        <button onClick={() => window.location.reload()} className="btn-primary">
+                            Try Again
+                        </button>
+                    )}
+                    <button onClick={() => navigate('/')} className={isRateLimitError ? 'btn-secondary' : 'btn-primary'}>
+                        Go Home
+                    </button>
+                </div>
             </div>
         );
     }
