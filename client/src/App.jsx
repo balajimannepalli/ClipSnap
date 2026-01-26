@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import Landing from './pages/Landing';
 import CreateClip from './pages/CreateClip';
 import ClipView from './pages/ClipView';
@@ -11,13 +11,13 @@ import { ThemeProvider } from './context/ThemeProvider';
 function App() {
     const [toast, setToast] = useState(null);
 
-    const showToast = (message, type = 'success', duration = 3000) => {
+    const showToast = useCallback((message, type = 'success', duration = 3000) => {
         setToast({ message, type, duration });
-    };
+    }, []);
 
-    const hideToast = () => {
+    const hideToast = useCallback(() => {
         setToast(null);
-    };
+    }, []);
 
     return (
         <ThemeProvider>
