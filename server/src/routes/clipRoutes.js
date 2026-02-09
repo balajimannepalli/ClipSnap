@@ -9,6 +9,23 @@ const router = express.Router();
 const BCRYPT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS) || 10;
 const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || 'http://localhost:5173';
 
+// Validate clipboardId format (4-5 digit numeric) to prevent NoSQL injection
+const CLIPBOARD_ID_REGEX = /^[0-9]{4,5}$/;
+
+/**
+ * Middleware to validate clipboardId parameter
+ */
+function validateClipboardId(req, res, next) {
+    const { clipboardId } = req.params;
+    if (!CLIPBOARD_ID_REGEX.test(clipboardId)) {
+        return res.status(400).json({
+            error: 'Invalid clipboard ID format',
+            code: 'INVALID_ID'
+        });
+    }
+    next();
+}
+
 /**
  * POST /api/clip
  * Create a new clip
@@ -61,7 +78,7 @@ router.post('/', createLimiter, validateSize, validateTextOnly, async (req, res)
  * Get clip content (TTL is fixed from creation, not reset on access)
  * Returns: { clipboardId, content, lastUpdated, createdAt }
  */
-router.get('/:clipboardId', readLimiter, async (req, res) => {
+router.get('/:clipboardId', validateClipboardId, readLimiter, async (req, res) => {
     try {
         const { clipboardId } = req.params;
 
@@ -97,7 +114,7 @@ router.get('/:clipboardId', readLimiter, async (req, res) => {
  * Get clip metadata without content
  * Returns: { clipboardId, sizeBytes, lastUpdated }
  */
-router.get('/:clipboardId/meta', readLimiter, async (req, res) => {
+router.get('/:clipboardId/meta', validateClipboardId, readLimiter, async (req, res) => {
     try {
         const { clipboardId } = req.params;
 
@@ -135,7 +152,7 @@ router.get('/:clipboardId/meta', readLimiter, async (req, res) => {
  * Headers/Body: creatorToken required
  * Body: { content: string, creatorToken?: string }
  */
-router.post('/:clipboardId/edit', editLimiter, validateSize, validateTextOnly, async (req, res) => {
+router.post('/:clipboardId/edit', validateClipboardId, editLimiter, validateSize, validateTextOnly, async (req, res) => {
     try {
         const { clipboardId } = req.params;
         const { content } = req.body;
@@ -177,7 +194,7 @@ router.post('/:clipboardId/edit', editLimiter, validateSize, validateTextOnly, a
             });
         }
 
-        // Update content and reset TTL
+        // Update content (no TTL reset - expires 15 min after creation)
         const updatedClip = await Clip.updateContent(clipboardId, content);
 
         res.json({

@@ -3,14 +3,15 @@ import Clip from '../models/Clip.js';
 
 /**
  * Generate 4-digit numeric clipboard ID with collision handling
- * @returns {Promise<string>} Unique 4-digit clipboard ID
+ * Uses crypto.randomInt() for cryptographically secure randomness
+ * @returns {Promise<string>} Unique 4-5 digit clipboard ID
  */
 export async function generateClipboardId() {
     const maxAttempts = 50;
 
     for (let i = 0; i < maxAttempts; i++) {
-        // Generate random 4-digit number (1000-9999)
-        const id = String(Math.floor(1000 + Math.random() * 9000));
+        // Generate cryptographically secure random 4-digit number (1000-9999)
+        const id = String(crypto.randomInt(1000, 10000));
         const existing = await Clip.findOne({ clipboardId: id }).lean();
 
         if (!existing) {
@@ -18,9 +19,16 @@ export async function generateClipboardId() {
         }
     }
 
-    // Fallback: 5-digit if too many collisions
-    const fallbackId = String(Math.floor(10000 + Math.random() * 90000));
-    return fallbackId;
+    // Fallback: 5-digit if too many collisions (also check uniqueness)
+    const fallbackId = String(crypto.randomInt(10000, 100000));
+    const fallbackExists = await Clip.findOne({ clipboardId: fallbackId }).lean();
+
+    if (!fallbackExists) {
+        return fallbackId;
+    }
+
+    // If even fallback collides, throw error (extremely rare)
+    throw new Error('Unable to generate unique clipboard ID - please try again');
 }
 
 /**

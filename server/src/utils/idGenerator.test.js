@@ -2,11 +2,12 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
-import { customAlphabet } from 'nanoid';
 
 // Test the generation logic directly without DB dependency
-const BASE62 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-const generateId = customAlphabet(BASE62, 7);
+// Using crypto.randomInt to match actual implementation
+function generateId() {
+    return String(crypto.randomInt(1000, 10000));
+}
 
 function generateCreatorToken() {
     return crypto.randomBytes(32).toString('hex');
@@ -14,22 +15,30 @@ function generateCreatorToken() {
 
 describe('ID Generator', () => {
     describe('generateClipboardId (logic only)', () => {
-        it('should generate a string of 7 characters', () => {
+        it('should generate a 4-digit numeric string', () => {
             const id = generateId();
-            assert.strictEqual(id.length, 7, `ID length should be 7, got ${id.length}`);
+            assert.strictEqual(id.length, 4, `ID length should be 4, got ${id.length}`);
         });
 
-        it('should generate alphanumeric characters only', () => {
+        it('should generate numeric characters only', () => {
             const id = generateId();
-            assert.match(id, /^[a-zA-Z0-9]+$/, 'ID should be alphanumeric');
+            assert.match(id, /^[0-9]+$/, 'ID should be numeric');
         });
 
-        it('should generate unique IDs', () => {
+        it('should generate IDs in valid range (1000-9999)', () => {
+            for (let i = 0; i < 100; i++) {
+                const id = parseInt(generateId(), 10);
+                assert.ok(id >= 1000 && id <= 9999, `ID ${id} should be in range 1000-9999`);
+            }
+        });
+
+        it('should generate unique IDs (high probability)', () => {
             const ids = new Set();
             for (let i = 0; i < 100; i++) {
                 ids.add(generateId());
             }
-            assert.strictEqual(ids.size, 100, 'All 100 IDs should be unique');
+            // With 9000 possible values, 100 samples should have very few collisions
+            assert.ok(ids.size >= 90, `Expected at least 90 unique IDs, got ${ids.size}`);
         });
     });
 

@@ -4,6 +4,9 @@ import Clip from '../models/Clip.js';
 const MAX_SIZE_BYTES = 100 * 1024; // 100 KB
 const DEBOUNCE_MS = 1500;
 
+// Validate clipboardId format (4-5 digit numeric) to prevent injection
+const CLIPBOARD_ID_REGEX = /^[0-9]{4,5}$/;
+
 // Track room state and debounce timers
 const roomState = new Map();
 const debounceTimers = new Map();
@@ -27,6 +30,12 @@ export function setupSocketHandlers(io) {
 
                 if (!clipboardId) {
                     socket.emit('error', { message: 'clipboardId is required' });
+                    return;
+                }
+
+                // Validate clipboardId format
+                if (!CLIPBOARD_ID_REGEX.test(clipboardId)) {
+                    socket.emit('error', { message: 'Invalid clipboard ID format' });
                     return;
                 }
 

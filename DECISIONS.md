@@ -89,30 +89,32 @@ This document explains the key architectural and design decisions made for ClipS
 
 ## 5. TTL Reset Behavior
 
-### Decision: Reset on edit AND on access (GET)
+### Decision: No TTL reset - clips expire 15 min after creation only
 
-**Why reset on access:**
-- Prevents "mid-read" expiration
-- Viewers accessing clip keep it alive
-- More intuitive UX (if someone's using it, it stays)
+**Why no reset:**
+- Simpler mental model (clip lifetime is predictable)
+- Prevents abuse (continuously refreshing to keep clips alive indefinitely)
+- Reduces database write operations
+- Aligns with ephemeral nature of the app
 
-**Configuration:** Can be changed via environment variable if needed.
+**Implementation:** MongoDB TTL index on `createdAt` field. Edits update `lastUpdated` but do not extend expiration.
 
 ---
 
 ## 6. Clip ID Format
 
-### Decision: 7-character Base62
+### Decision: 4-5 digit numeric
 
-**Format:** `[0-9A-Za-z]{7}` (e.g., `Ab3xF9k`)
+**Format:** `[0-9]{4,5}` (e.g., `1234`, `56789`)
 
 **Why:**
-- 62^7 = 3.5 trillion combinations (collision-resistant)
-- URL-safe (no encoding needed)
-- Short enough to share verbally
-- Human-readable, easy to type
+- Easy to share verbally or type on mobile
+- Short and memorable
+- Uses crypto.randomInt() for secure generation
+- 4-digit range (1000-9999) provides 9000 combinations
+- Falls back to 5-digit (10000-99999) if collisions occur
 
-**Collision handling:** Generate and check, retry up to 10 times.
+**Collision handling:** Generate and check up to 50 times, then try 5-digit fallback with uniqueness check.
 
 ---
 
