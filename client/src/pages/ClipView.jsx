@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef, useLayoutEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getClip } from '../utils/api';
 import { getCreatorToken } from '../utils/storage';
@@ -24,6 +24,10 @@ export default function ClipView() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [autoCopied, setAutoCopied] = useState(false);
+
+    // Ref for auto-resizing textarea
+    const textareaRef = useRef(null);
+    const shadowRef = useRef(null);
 
     // Get creator token from localStorage
     const creatorToken = getCreatorToken(id);
@@ -120,6 +124,16 @@ export default function ClipView() {
         setContent(newContent);
         emitEdit(newContent);
     };
+
+    // Auto-resize textarea when content changes (creator mode)
+    useLayoutEffect(() => {
+        if (isCreator && shadowRef.current && textareaRef.current) {
+            shadowRef.current.style.height = '0px';
+            const scrollHeight = shadowRef.current.scrollHeight;
+
+            textareaRef.current.style.height = Math.max(160, scrollHeight) + 'px';
+        }
+    }, [content, isCreator]);
 
     // Format relative time
     const formatTime = (isoString) => {
@@ -264,14 +278,24 @@ export default function ClipView() {
             <div className="card mb-6">
                 {isCreator ? (
                     // Creator: Editable textarea
-                    <div>
+                    <div className="relative">
                         <label htmlFor="content" className="sr-only">Edit clip content</label>
                         <textarea
+                            ref={textareaRef}
                             id="content"
                             value={content}
                             onChange={handleContentChange}
-                            className="w-full h-64 md:h-96 text-sm"
+                            className="w-full min-h-[160px] overflow-hidden resize-none text-sm"
                             placeholder="Start typing..."
+                        />
+                        {/* Shadow textarea */}
+                        <textarea
+                            ref={shadowRef}
+                            value={content}
+                            readOnly
+                            aria-hidden="true"
+                            tabIndex={-1}
+                            className="absolute top-0 left-0 -z-50 invisible w-full min-h-[160px] overflow-hidden resize-none text-sm"
                         />
                         <div className="mt-3 flex items-center justify-between text-sm text-themed-muted">
                             <span>{(sizeBytes / 1024).toFixed(1)} KB / 100 KB</span>

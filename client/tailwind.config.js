@@ -30,13 +30,13 @@ export default {
                 // Premium, sustainable, calm, lifestyle-oriented
                 // =====================================================
                 light: {
-                    bg: '#f7f5f2',            // Soft off-white/warm beige
-                    surface: '#ffffff',        // Cards/elevated surfaces
-                    border: '#e8e4de',         // Subtle warm borders
-                    'border-hover': '#d4cfc7', // Border on hover
-                    text: '#1a1a1a',           // Primary text
-                    'text-secondary': '#6b6b6b', // Secondary text
-                    'text-muted': '#9a9a9a',   // Muted/disabled text
+                    bg: '#ffffff',            // Pure white
+                    surface: '#f3f4f6',        // Light gray surface
+                    border: '#e5e7eb',         // Gray-200
+                    'border-hover': '#d1d5db', // Gray-300
+                    text: '#000000',           // Pure black
+                    'text-secondary': '#4b5563', // Gray-600
+                    'text-muted': '#9ca3af',   // Gray-400
                 },
 
                 // =====================================================
@@ -90,8 +90,6 @@ export default {
             fontFamily: {
                 // Sans-serif: Inter for both themes
                 sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-                // Serif: for light theme headlines
-                serif: ['Playfair Display', 'Georgia', 'serif'],
                 // Monospace: for code blocks
                 mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
             },

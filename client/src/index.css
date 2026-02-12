@@ -28,8 +28,8 @@
     --color-text: #1a1a1a;
     --color-text-secondary: #6b6b6b;
     --color-text-muted: #9a9a9a;
-    --color-accent: #5c6b4a;
-    --color-accent-hover: #4a5a3a;
+    --color-accent: #000000;
+    --color-accent-hover: #333333;
 
     /* Light theme: rounded corners, soft shadows */
     --radius-card: 1rem;
@@ -112,7 +112,7 @@ body {
 }
 
 ::selection {
-  background-color: rgba(92, 107, 74, 0.2);
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 .dark ::selection {
@@ -126,8 +126,9 @@ body {
 h1,
 h2,
 h3 {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-weight: 600;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: var(--color-text);
 }
 
@@ -165,7 +166,7 @@ h3 {
   input:focus {
     border-color: var(--color-accent);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(92, 107, 74, 0.1);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
   }
 
   .dark textarea:focus,
@@ -318,10 +319,9 @@ h3 {
    Gradient Text (Light theme only - removed for dark)
    ===================================================== */
 .gradient-text {
-  background: linear-gradient(135deg, #5c6b4a, #8b7355);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  background: none;
+  -webkit-text-fill-color: #000000;
+  color: #000000;
 }
 
 .dark .gradient-text {

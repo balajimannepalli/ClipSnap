@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useLayoutEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createClip } from '../utils/api';
 import { saveCreatorToken } from '../utils/storage';
@@ -12,6 +12,8 @@ export default function CreateClip() {
     const [content, setContent] = useState('');
     const [creating, setCreating] = useState(false);
     const [error, setError] = useState('');
+    const textareaRef = useRef(null);
+    const shadowRef = useRef(null);
     const navigate = useNavigate();
     const { showToast } = useToast();
     const { copyToClipboard } = useClipboard();
@@ -19,6 +21,17 @@ export default function CreateClip() {
     const sizeBytes = new Blob([content]).size;
     const sizePercent = Math.min((sizeBytes / MAX_SIZE_BYTES) * 100, 100);
     const isOverLimit = sizeBytes > MAX_SIZE_BYTES;
+
+    useLayoutEffect(() => {
+        if (shadowRef.current && textareaRef.current) {
+            // Reset shadow height to allow shrinkage measurement
+            shadowRef.current.style.height = '0px';
+            const scrollHeight = shadowRef.current.scrollHeight;
+
+            // Set real textarea height based on shadow
+            textareaRef.current.style.height = Math.max(160, scrollHeight) + 'px';
+        }
+    }, [content]);
 
     const handleCreate = async () => {
         if (!content.trim()) {
@@ -87,6 +100,7 @@ export default function CreateClip() {
                     <div className="relative">
                         <label htmlFor="content" className="sr-only">Clip content</label>
                         <textarea
+                            ref={textareaRef}
                             id="content"
                             value={content}
                             onChange={(e) => {
@@ -94,8 +108,17 @@ export default function CreateClip() {
                                 setError('');
                             }}
                             placeholder="Paste or type your text here..."
-                            className={`w-full h-64 md:h-96 ${isOverLimit ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : ''}`}
+                            className={`w-full min-h-[160px] overflow-hidden resize-none ${isOverLimit ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : ''}`}
                             autoFocus
+                        />
+                        {/* Shadow textarea for height calculation */}
+                        <textarea
+                            ref={shadowRef}
+                            value={content}
+                            readOnly
+                            aria-hidden="true"
+                            tabIndex={-1}
+                            className={`absolute top-0 left-0 -z-50 invisible w-full min-h-[160px] overflow-hidden resize-none ${isOverLimit ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : ''}`}
                         />
                     </div>
 
