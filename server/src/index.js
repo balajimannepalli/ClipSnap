@@ -28,6 +28,11 @@ const io = new Server(httpServer, {
     pingInterval: 25000
 });
 
+app.get('/ping', (req, res) => {
+    res.status(200).json({ message: 'Pong! Server is awake.' });
+});
+
+
 // Security middleware
 app.use(helmet({
     contentSecurityPolicy: {
